@@ -1,3 +1,4 @@
+import copy
 import random
 import typing as tp
 
@@ -79,13 +80,42 @@ class GameOfLife:
         out : Grid
             Матрица клеток размером `cell_height` х `cell_width`.
         """
-        pass
+        if randomize:
+            return [
+                [random.randint(0, 1) for x in range(self.cell_width)]
+                for _ in range(self.cell_height)
+            ]
+        else:
+            return [[0] * self.cell_width for _ in range(self.cell_height)]
 
     def draw_grid(self) -> None:
         """
         Отрисовка списка клеток с закрашиванием их в соответствующе цвета.
         """
-        pass
+        for x in range(self.cell_width):
+            for y in range(self.cell_height):
+                if self.grid[y][x] != 0:
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("green"),
+                        (
+                            (self.cell_size * x),
+                            (self.cell_size * y),
+                            self.cell_size,
+                            self.cell_size,
+                        ),
+                    )
+                else:
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("white"),
+                        (
+                            (self.cell_size * x),
+                            (self.cell_size * y),
+                            self.cell_size,
+                            self.cell_size,
+                        ),
+                    )
 
     def get_neighbours(self, cell: Cell) -> Cells:
         """
@@ -105,7 +135,17 @@ class GameOfLife:
         out : Cells
             Список соседних клеток.
         """
-        pass
+        neighbors = []
+        shifts = ((i, j) for i in [-1, 0, 1] for j in [-1, 0, 1])  # possible shifts for neighbors
+        for x_c, y_c in shifts:  # 9 possible cells in a quadrant
+            if (x_c, y_c) == (0, 0):  # except the one we check
+                continue
+
+            row, col = cell[0] + x_c, cell[1] + y_c
+            if self._is_a_cell((row, col)):
+                neighbors.append(int(self.is_alive((row, col))))
+
+        return neighbors
 
     def get_next_generation(self) -> Grid:
         """
