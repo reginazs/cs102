@@ -1,9 +1,7 @@
-import copy
 import random
 import typing as tp
 
 import pygame
-from pygame.locals import *
 
 Cell = tp.Tuple[int, int]
 Cells = tp.List[int]
@@ -11,6 +9,10 @@ Grid = tp.List[Cells]
 
 
 class GameOfLife:
+    """
+    Business logic class
+    """
+
     def __init__(
         self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10
     ) -> None:
@@ -30,12 +32,14 @@ class GameOfLife:
         # Скорость протекания игры
         self.speed = speed
 
+        self.grid = self.create_grid()
+
     def draw_lines(self) -> None:
         """ Отрисовать сетку """
-        for x in range(0, self.width, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (x, 0), (x, self.height))
-        for y in range(0, self.height, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (0, y), (self.width, y))
+        for x_c in range(0, self.width, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (x_c, 0), (x_c, self.height))
+        for y_c in range(0, self.height, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (0, y_c), (self.width, y_c))
 
     def run(self) -> None:
         """ Запустить игру """
@@ -44,23 +48,35 @@ class GameOfLife:
         pygame.display.set_caption("Game of Life")
         self.screen.fill(pygame.Color("white"))
 
-        # Создание списка клеток
-        # PUT YOUR CODE HERE
+        self.grid = self.create_grid(randomize=True)
 
         running = True
         while running:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     running = False
+
+            self.draw_grid()
             self.draw_lines()
 
-            # Отрисовка списка клеток
             # Выполнение одного шага игры (обновление состояния ячеек)
-            # PUT YOUR CODE HERE
+            self.grid = self.get_next_generation()
 
             pygame.display.flip()
             clock.tick(self.speed)
         pygame.quit()
+
+    def is_alive(self, cell: Cell) -> bool:
+        """
+        Checks if a cell is alive
+        """
+        return bool(self.grid[cell[0]][cell[1]])
+
+    def _is_a_cell(self, cell: Cell) -> bool:
+        """
+        Checks a cell for coordinate validity
+        """
+        return 0 <= cell[0] < len(self.grid) and 0 <= cell[1] < len(self.grid[0])
 
     def create_grid(self, randomize: bool = False) -> Grid:
         """
@@ -86,7 +102,7 @@ class GameOfLife:
                 for _ in range(self.cell_height)
             ]
         else:
-            return [[0] * self.cell_width for _ in range(self.cell_height)]
+            return [[0 for _ in range(self.cell_width)] for _ in range(self.cell_height)]
 
     def draw_grid(self) -> None:
         """
@@ -136,15 +152,13 @@ class GameOfLife:
             Список соседних клеток.
         """
         neighbors = []
-        shifts = ((i, j) for i in [-1, 0, 1] for j in [-1, 0, 1])  # possible shifts for neighbors
-        for x_c, y_c in shifts:  # 9 possible cells in a quadrant
-            if (x_c, y_c) == (0, 0):  # except the one we check
+        shifts = ((i, j) for i in (-1, 2) for j in (-1, 2))
+        for x, y in shifts:
+            if (x, y) == (0, 0):
                 continue
-
-            row, col = cell[0] + x_c, cell[1] + y_c
+            row, col = cell[0] + x, cell[1] + y
             if self._is_a_cell((row, col)):
                 neighbors.append(int(self.is_alive((row, col))))
-
         return neighbors
 
     def get_next_generation(self) -> Grid:
@@ -156,4 +170,17 @@ class GameOfLife:
         out : Grid
             Новое поколение клеток.
         """
-        pass
+        new_gen = self.create_grid(False)
+        for x in range(self.cell_height):
+            for y in range(self.cell_width):
+                new_ngbrs = self.get_neighbours((x, y)).count(1)
+                if self.grid[x][y] == 0 and new_ngbrs == 3:
+                    new_gen[x][y] = 1
+                elif self.grid[x][y] == 1 and new_ngbrs in [2, 3]:
+                    new_gen[x][y] = 1
+        return new_gen
+
+
+if __name__ == "__main__":
+    game = GameOfLife(640, 480, 20)
+    game.run()
