@@ -27,8 +27,8 @@ class Console(UI):
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
-        for x in range(1, self.rows - 1):
-            for y in range(1, self.cols - 1):
+        for x in range(1, self.life.rows - 1):
+            for y in range(1, self.life.cols - 1):
                 if self.life.curr_generation[x][y] == 1:
                     screen.addstr(x + 1, y + 1, "*")
                 else:
@@ -40,7 +40,7 @@ class Console(UI):
         self.draw_grid(screen)
         screen.refresh()
         time.sleep(1)
-        while not self.life.is_max_generations_exceed and self.life.is_changing:
+        while not self.life.is_max_generations_exceeded and self.life.is_changing:
             self.life.step()
             self.draw_grid(screen)
             screen.refresh()

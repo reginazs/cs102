@@ -28,6 +28,20 @@ class GameOfLife:
         # Текущее число поколений
         self.generations = 1
 
+    def is_alive(self, cell: Cell) -> bool:
+        """
+        Checks if a cell is alive
+        """
+        return bool(self.curr_generation[cell[0]][cell[1]])
+
+    def _is_a_cell(self, cell: Cell) -> bool:
+        """
+        Checks a cell for coordinate validity
+        """
+        return 0 <= cell[0] < len(self.curr_generation) and 0 <= cell[1] < len(
+            self.curr_generation[0]
+        )
+
     def create_grid(self, randomize: bool = False) -> Grid:
         """
         Создание списка клеток.
@@ -47,12 +61,9 @@ class GameOfLife:
             Матрица клеток размером `cell_height` х `cell_width`.
         """
         if randomize:
-            return [
-                [random.randint(0, 1) for x in range(self.cell_width)]
-                for _ in range(self.cell_height)
-            ]
+            return [[random.randint(0, 1) for x in range(self.cols)] for _ in range(self.rows)]
         else:
-            return [[0 for _ in range(self.cell_width)] for _ in range(self.cell_height)]
+            return [[0 for _ in range(self.cols)] for _ in range(self.rows)]
 
     def get_neighbours(self, cell: Cell) -> Cells:
         """
@@ -92,12 +103,12 @@ class GameOfLife:
             Новое поколение клеток.
         """
         new_gen = self.create_grid(False)
-        for x in range(self.cell_height):
-            for y in range(self.cell_width):
+        for x in range(self.cols):
+            for y in range(self.rows):
                 new_ngbrs = self.get_neighbours((x, y)).count(1)
-                if self.grid[x][y] == 0 and new_ngbrs == 3:
+                if self.curr_generation[x][y] == 0 and new_ngbrs == 3:
                     new_gen[x][y] = 1
-                elif self.grid[x][y] == 1 and new_ngbrs in [2, 3]:
+                elif self.curr_generation[x][y] == 1 and new_ngbrs in [2, 3]:
                     new_gen[x][y] = 1
         return new_gen
 
@@ -136,6 +147,7 @@ class GameOfLife:
 
         game = GameOfLife((row, col))
         game.curr_generation = grid
+        return game
 
     def save(self, filename: pathlib.Path) -> None:
         """
