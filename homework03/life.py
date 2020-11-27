@@ -55,7 +55,7 @@ class GameOfLife:
             return [[0 for _ in range(self.cell_width)] for _ in range(self.cell_height)]
 
     def get_neighbours(self, cell: Cell) -> Cells:
-         """
+        """
         Вернуть список соседних клеток для клетки `cell`.
 
         Соседними считаются клетки по горизонтали, вертикали и диагоналям,
@@ -105,10 +105,9 @@ class GameOfLife:
         """
         Выполнить один шаг игры.
         """
-        if not self.is_max_generations_exceeded:
-        self.prev_generation = self.curr_generation()
+        self.prev_generation = self.curr_generation[:]
         self.curr_generation = self.get_next_generation()
-        self.generations +=1
+        self.generations += 1
 
     @property
     def is_max_generations_exceeded(self) -> bool:
@@ -132,11 +131,11 @@ class GameOfLife:
         Прочитать состояние клеток из указанного файла.
         """
         with open(filename) as file:
-            grid = [[int(x) for x in list(rw)]] for rw in file.readline()]
+            grid = [[int(x) for x in list(rw)] for rw in file.readline()]
         row, col = len(grid), len(grid[0])
 
         game = GameOfLife((row, col))
-        game.curr_generation = grid            
+        game.curr_generation = grid
 
     def save(self, filename: pathlib.Path) -> None:
         """
@@ -144,5 +143,5 @@ class GameOfLife:
         """
         with open(filename) as file:
             for row in self.curr_generation:
-                file.write(''.join([str(x) for x in row]))
-                file.write('\n')
+                file.write("".join([str(x) for x in row]))
+                file.write("\n")
