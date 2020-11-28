@@ -83,8 +83,10 @@ class GameOfLife:
         with open(filename) as file:
             grid = [[int(x) for x in list(rw)] for rw in file.readline()]
         row, col = len(grid), len(grid[0])
+
+        game = GameOfLife((row, col))
         game.curr_generation = grid
-        return GameOfLife((row, col))
+        return game
 
     def save(self, filename: pathlib.Path) -> None:
         """

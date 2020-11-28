@@ -1,16 +1,33 @@
+import curses
+import curses.ascii
+from time import sleep
+
 import pygame
 from pygame.locals import *
 
+from life import GameOfLife
+from ui import UI
+
 
 class GUI(UI):
-
-    def __init__(self, life: GameOfLife, cell_size: int=10, speed: int=10) -> None:
-        # ...
+    def __init__(self, life: GameOfLife, cell_size: int = 10, speed: int = 10) -> None:
         super().__init__(life)
 
-   def draw_borders(self, screen) -> None:
+        self.cell_size = cell_size
+        self.speed = speed
+        self.width = self.life.cols * cell_size
+        self.height = self.life.rows * cell_size
+        self.screen = pygame.display.set_mode((self.width, self.height))
+
+    def draw_borders(self, screen) -> None:
         """ Отобразить рамку. """
         screen.border()
+
+    def draw_lines(self) -> None:
+        for i in range(0, self.width, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (i, 0), (i, self.height))
+        for j in range(0, self.height, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (0, j), (self.width, j))
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
@@ -23,35 +40,5 @@ class GUI(UI):
 
     def run(self) -> None:
         screen = curses.initscr()
-        curses.noecho()
-        screen.clear()
-        screen.refresh()
-        window = curses.newwin(self.life.rows + 2, self.life.cols + 2)
-        self.draw_borders(window)
-        window.timeout(1)
-        window.nodelay(True)
-
-        running = True
-        paused = False
-        while running:
-            char = window.getch()
-            if char == ord("\n"):
-                paused = False if paused else True
-            elif char == ord("S"):
-                self.life.save(self.save_path)
-            elif char == curses.ascii.ESC:
-                running = False
-            if not paused:
-                self.draw_grid(window)
-                window.refresh()
-                self.life.step()
-
-                sleep(1)
-
+        # PUT YOUR CODE HERE
         curses.endwin()
-
-
-if __name__ == "__main__":
-    life = GameOfLife((15, 30), randomize=True)
-    ui = Console(life, save_path=pathlib.Path("fileui.txt"))
-    ui.run()
