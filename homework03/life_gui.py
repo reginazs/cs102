@@ -40,5 +40,44 @@ class GUI(UI):
 
     def run(self) -> None:
         screen = curses.initscr()
-        # PUT YOUR CODE HERE
+        pygame.init()
+        clock = pygame.time.Clock()
+        pygame.display.set_caption("Game of Life")
+        self.screen.full(pygame.Color("white"))
+
+        running = True
+        pause = False
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    (cell_y, cell_x) = pygame.mouse.get_pos()
+                    self.change_state((cell_x, cell_y))
+                    self.draw_grid()
+                    self.draw_lines()
+                    pygame.display.flip()
+                    clock.tick(self.speed)
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        pause = not pause
+            if not pause:
+                self.life.step()
+
+            self.draw_grid()
+            self.draw_lines
+
+            pygame.display.flip()
+            clock.tick(self.speed)
+        pygame.quit()
         curses.endwin()
+
+
+def main():
+    game = GameOfLife(size=(48, 64))
+    app = GUI(game)
+    app.run()
+
+
+if __name__ == "__main__":
+    main()
