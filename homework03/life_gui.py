@@ -1,7 +1,3 @@
-import curses
-import curses.ascii
-from time import sleep
-
 import pygame
 from pygame.locals import *
 
@@ -12,72 +8,92 @@ from ui import UI
 class GUI(UI):
     def __init__(self, life: GameOfLife, cell_size: int = 10, speed: int = 10) -> None:
         super().__init__(life)
-
         self.cell_size = cell_size
         self.speed = speed
-        self.width = self.life.cols * cell_size
-        self.height = self.life.rows * cell_size
-        self.screen = pygame.display.set_mode((self.width, self.height))
-
-    def draw_borders(self, screen) -> None:
-        """ Отобразить рамку. """
-        screen.border()
+        self.screen = pygame.display.set_mode(
+            (self.life.cols * self.cell_size, self.life.rows * self.cell_size)
+        )
 
     def draw_lines(self) -> None:
-        for i in range(0, self.width, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (i, 0), (i, self.height))
-        for j in range(0, self.height, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (0, j), (self.width, j))
 
-    def draw_grid(self, screen) -> None:
-        """ Отобразить состояние клеток. """
-        for i in range(self.life.rows):
-            for j in range(self.life.cols):
-                if self.life.curr_generation[i][j] == 1:
-                    screen.addch(i + 1, j + 1, "*")
+        width = self.life.cols * self.cell_size
+        height = self.life.rows * self.cell_size
+        for x in range(0, width, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (x, 0), (x, height))
+        for y in range(0, height, self.cell_size):
+            pygame.draw.line(self.screen, pygame.Color("black"), (0, y), (width, y))
+
+    def draw_grid(self) -> None:
+        tab = self.cell_size - 1
+        for x in range(self.life.rows):
+            for y in range(self.life.cols):
+                if self.life.curr_generation[y][x] != 0:
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("green"),
+                        (
+                            (self.cell_size * x + 1),
+                            (self.cell_size * y + 1),
+                            tab,
+                            tab,
+                        ),
+                    )
                 else:
-                    screen.addch(i + 1, j + 1, " ")
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("white"),
+                        (
+                            (self.cell_size * x + 1),
+                            (self.cell_size * y + 1),
+                            tab,
+                            tab,
+                        ),
+                    )
 
     def run(self) -> None:
-        screen = curses.initscr()
+
         pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption("Game of Life")
-        self.screen.full(pygame.Color("white"))
+        self.screen.fill(pygame.Color("white"))
 
-        running = True
         pause = False
+        running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    (cell_y, cell_x) = pygame.mouse.get_pos()
-                    self.change_state((cell_x, cell_y))
-                    self.draw_grid()
-                    self.draw_lines()
-                    pygame.display.flip()
-                    clock.tick(self.speed)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        pause = not pause
-            if not pause:
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    pause = True
+
+            self.draw_lines()
+
+            if pause:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                    elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                        pause = True
+                    elif event.type == pygame.MOUSEBUTTONUP:
+                        doc = event.pos
+                        row = doc[1] // self.cell_size
+                        col = doc[0] // self.cell_size
+                        if self.life.curr_generation[row][col]:
+                            self.life.curr_generation[row][col] = 0
+                        else:
+                            self.life.curr_generation[row][col] = 1
+                        self.draw_grid()
+                        pygame.display.flip()
+            else:
+
                 self.life.step()
-
-            self.draw_grid()
-            self.draw_lines
-
-            pygame.display.flip()
-            clock.tick(self.speed)
+                self.draw_grid()
+                pygame.display.flip()
+                clock.tick(self.speed)
         pygame.quit()
-        curses.endwin()
-
-
-def main():
-    game = GameOfLife(size=(48, 64))
-    app = GUI(game)
-    app.run()
 
 
 if __name__ == "__main__":
-    main()
+    life = GameOfLife((20, 20), max_generations=500)
+    gui = GUI(life)
+    gui.run()

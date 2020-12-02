@@ -18,12 +18,31 @@ class Console(UI):
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
-        for i in range(self.life.rows):
-            for j in range(self.life.cols):
-                if self.life.curr_generation[i][j] == 1:
-                    screen.addch(i + 1, j + 1, "*")
+         tab = self.cell_size - 1
+        for x in range(self.cell_width):
+            for y in range(self.cell_height):
+                if self.grid[y][x] != 0:
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("green"),
+                        (
+                            (self.cell_size * x + 1),
+                            (self.cell_size * y + 1),
+                            tab,
+                            tab,
+                        ),
+                    )
                 else:
-                    screen.addch(i + 1, j + 1, " ")
+                    pygame.draw.rect(
+                        self.screen,
+                        pygame.Color("white"),
+                        (
+                            (self.cell_size * x + 1),
+                            (self.cell_size * y + 1),
+                            tab,
+                            tab,
+                        ),
+                    )
 
     def run(self) -> None:
         screen = curses.initscr()
