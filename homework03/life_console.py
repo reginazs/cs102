@@ -18,7 +18,7 @@ class Console(UI):
 
     def draw_grid(self, screen) -> None:
         """ Отобразить состояние клеток. """
-         tab = self.cell_size - 1
+        tab = self.cell_size - 1
         for x in range(self.cell_width):
             for y in range(self.cell_height):
                 if self.grid[y][x] != 0:
