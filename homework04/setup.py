@@ -1,11 +1,10 @@
-from setuptools import setup  # type: ignore
+from setuptools import setup  # type:ignore
 
 import pyvcs
 
 AUTHOR = "Dmitrii Sorokin"
 AUTHOR_EMAIL = "dementiy@yandex.ru"
 HOME_PAGE = "https://github.com/Dementiy/pybook-assignments"
-
 setup(
     name="pyvcs",
     version=pyvcs.__version__,
