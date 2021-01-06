@@ -5,7 +5,6 @@ from urllib.parse import unquote
 
 import pandas as pd  # type: ignore
 import responses  # type: ignore
-
 from vkapi.wall import get_wall_execute
 
 
@@ -13,23 +12,12 @@ class GetWallTestCase(unittest.TestCase):
     @responses.activate
     def test_total_count(self):
         expected_items = [
-            {
-                "id": 1,
-                "from_id": 1234,
-                "owner_id": 1234,
-                "date": 1234567890,
-                "text": "some message",
-            }
+            {"id": 1, "from_id": 1234, "owner_id": 1234, "date": 1234567890, "text": "some message"}
         ]
         responses.add(
             responses.POST,
             "https://api.vk.com/method/execute",
-            json={
-                "response": {
-                    "count": 1,
-                    "items": expected_items,
-                }
-            },
+            json={"response": {"count": 1, "items": expected_items}},
             status=200,
         )
         wall = get_wall_execute(domain="cs102py", count=1)
@@ -54,17 +42,12 @@ class GetWallTestCase(unittest.TestCase):
         responses.add(
             responses.POST,
             "https://api.vk.com/method/execute",
-            json={
-                "response": {
-                    "count": 6000,
-                    "items": [],
-                }
-            },
+            json={"response": {"count": 6000, "items": []}},
             status=200,
         )
         start = time.time()
         with patch("vkapi.wall.get_posts_2500") as get_posts_2500:
             get_posts_2500.return_value = []
-            _ = get_wall_execute(domain="cs102py", max_count=1000, count=6000)
+            _ = get_wall_execute(domain="cs102py", count=6000)
         end = time.time()
         self.assertGreaterEqual(end - start, 2.0, msg="Слишком много запросов в секунду")
