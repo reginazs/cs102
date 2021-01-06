@@ -1,3 +1,4 @@
+import math
 import textwrap
 import time
 import typing as tp
@@ -5,8 +6,8 @@ from string import Template
 
 import pandas as pd
 from pandas import json_normalize
-
-from vkapi import config, session
+from vkapi import session
+from vkapi.config import VK_CONFIG
 from vkapi.exceptions import APIError
 
 
