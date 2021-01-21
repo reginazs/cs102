@@ -1,8 +1,7 @@
 import os
 import pathlib
 
-from pyfakefs.fake_filesystem_unittest import TestCase
-
+from pyfakefs.fake_filesystem_unittest import TestCase  # type: ignore
 from pyvcs import repo
 
 
@@ -39,7 +38,8 @@ class RepoCreateTestCase(TestCase):
         self.assertTrue(description.exists())
         with description.open() as f:
             self.assertEqual(
-                "Unnamed pyvcs repository.\n", f.read(),
+                "Unnamed pyvcs repository.\n",
+                f.read(),
             )
 
     def test_cant_create_repo_if_workdir_is_a_file(self):

@@ -3,15 +3,16 @@ import pathlib
 import unittest
 from unittest.mock import patch
 
-from pyfakefs.fake_filesystem_unittest import TestCase
-
 import pyvcs
-from pyvcs.index import GitIndexEntry, ls_files, read_index, update_index, write_index
+from pyfakefs.fake_filesystem_unittest import TestCase  # type:ignore
+from pyvcs.index import (GitIndexEntry, ls_files, read_index, update_index,
+                         write_index)
 from pyvcs.repo import repo_create
 
 
 @unittest.skipIf(pyvcs.__version_info__ < (0, 4, 0), "Нужна версия пакета 0.4.0 и выше")
 class GitIndexEntryTestCase(TestCase):
+
     def test_pack(self):
         entry = GitIndexEntry(
             ctime_s=1593379228,
@@ -50,9 +51,9 @@ class GitIndexEntryTestCase(TestCase):
         )
         self.assertEqual(expected_entry, GitIndexEntry.unpack(pack))
 
-
 @unittest.skipIf(pyvcs.__version_info__ < (0, 4, 0), "Нужна версия пакета 0.4.0 и выше")
 class ReadIndexTestCase(TestCase):
+
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -60,13 +61,10 @@ class ReadIndexTestCase(TestCase):
         gitdir = repo_create(".")
         raw_index = b"DIRC\x00\x00\x00\x02\x00\x00\x00\x03^\xf9\t\x9c\x0b\xf0\xcf\x05^\xf9\t\x9c\x0b\xf0\xcf\x05\x01\x00\x00\x04\x00\x83b\xcb\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x04W\x16\xcaY\x87\xcb\xf9}k\xb5I \xbe\xa6\xad\xde$-\x87\xe6\x00\x07bar.txt\x00\x00\x00^\xf9\t\xca\x1f\xf0l^^\xf9\t\xca\x1f\xf0l^\x01\x00\x00\x04\x00\x83b\xf6\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x07\x9f5\x8aJ\xdd\xef\xca\xb2\x94\xb8>B\x82\xbf\xef\x1f\x96%\xa2I\x00\x0fbaz/numbers.txt\x00\x00\x00^\xf9\t\xa18\xd3\xad\xbb^\xf9\t\xa18\xd3\xad\xbb\x01\x00\x00\x04\x00\x83b\xd3\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x04%|\xc5d,\xb1\xa0T\xf0\x8c\xc8?-\x94>V\xfd>\xbe\x99\x00\x07foo.txt\x00\x00\x00k\xd6q\xa7d\x10\x8e\x80\x93F]\x0c}+\x82\xfb\xc7:\xa8\x11"
         self.fs.create_file(gitdir / "index", contents=raw_index)
-
         entries = read_index(gitdir)
         self.assertEqual(3, len(entries))
         # TODO: Add sha
-        self.assertEqual(
-            ["bar.txt", "baz/numbers.txt", "foo.txt"], [e.name for e in entries]
-        )
+        self.assertEqual(["bar.txt", "baz/numbers.txt", "foo.txt"], [e.name for e in entries])
 
     def test_read_index_when_index_doesnt_exist(self):
         gitdir = repo_create(".")
@@ -74,9 +72,9 @@ class ReadIndexTestCase(TestCase):
         self.assertEqual(0, len(entries))
         self.assertEqual([], entries)
 
-
 @unittest.skipIf(pyvcs.__version_info__ < (0, 4, 0), "Нужна версия пакета 0.4.0 и выше")
 class LsFilesTestCase(TestCase):
+
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -104,9 +102,9 @@ class LsFilesTestCase(TestCase):
             ls_files(gitdir, details=True)
             self.assertEqual(expected_output, out.getvalue().strip())
 
-
 @unittest.skipIf(pyvcs.__version_info__ < (0, 4, 0), "Нужна версия пакета 0.4.0 и выше")
 class WriteIndexTestCase(TestCase):
+
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -160,16 +158,15 @@ class WriteIndexTestCase(TestCase):
             ),
         ]
         write_index(gitdir, entries)
-
         index = gitdir / "index"
         with index.open(mode="rb") as f:
             index_data = f.read()
         expected_index_data = b"DIRC\x00\x00\x00\x02\x00\x00\x00\x03^\xf9\t\x9c\x0b\xf0\xcf\x05^\xf9\t\x9c\x0b\xf0\xcf\x05\x01\x00\x00\x04\x00\x83b\xcb\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x04W\x16\xcaY\x87\xcb\xf9}k\xb5I \xbe\xa6\xad\xde$-\x87\xe6\x00\x07bar.txt\x00\x00\x00^\xf9\t\xca\x1f\xf0l^^\xf9\t\xca\x1f\xf0l^\x01\x00\x00\x04\x00\x83b\xf6\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x07\x9f5\x8aJ\xdd\xef\xca\xb2\x94\xb8>B\x82\xbf\xef\x1f\x96%\xa2I\x00\x0fbaz/numbers.txt\x00\x00\x00^\xf9\t\xa18\xd3\xad\xbb^\xf9\t\xa18\xd3\xad\xbb\x01\x00\x00\x04\x00\x83b\xd3\x00\x00\x81\xa4\x00\x00\x01\xf5\x00\x00\x00\x14\x00\x00\x00\x04%|\xc5d,\xb1\xa0T\xf0\x8c\xc8?-\x94>V\xfd>\xbe\x99\x00\x07foo.txt\x00\x00\x00k\xd6q\xa7d\x10\x8e\x80\x93F]\x0c}+\x82\xfb\xc7:\xa8\x11"
         self.assertEqual(expected_index_data, index_data)
 
-
 @unittest.skipIf(pyvcs.__version_info__ < (0, 4, 0), "Нужна версия пакета 0.4.0 и выше")
 class UpdateIndexTestCase(TestCase):
+
     def setUp(self):
         self.setUpPyfakefs()
 
@@ -178,7 +175,6 @@ class UpdateIndexTestCase(TestCase):
         index = gitdir / "index"
         quote = pathlib.Path("quote.txt")
         self.fs.create_file(quote, contents="that's what she said")
-
         self.assertFalse(index.exists())
         update_index(gitdir, [quote])
         self.assertTrue(index.exists())
@@ -195,13 +191,11 @@ class UpdateIndexTestCase(TestCase):
         self.fs.create_file(letters, contents="abcdefg")
         digits = pathlib.Path("digits.txt")
         self.fs.create_file(digits, contents="1234567890")
-
         self.assertFalse(index.exists())
         update_index(gitdir, [letters, digits])
         self.assertTrue(index.exists())
         entries = read_index(gitdir)
         self.assertEqual(2, len(entries))
-
         names = [e.name for e in entries]
         self.assertEqual(["digits.txt", "letters.txt"], names)
 
@@ -214,14 +208,10 @@ class UpdateIndexTestCase(TestCase):
         self.fs.create_file(letters, contents="abcdefg")
         digits = pathlib.Path("numbers") / "digits.txt"
         self.fs.create_file(digits, contents="1234567890")
-
         self.assertFalse(index.exists())
         update_index(gitdir, [quote, letters, digits])
         self.assertTrue(index.exists())
         entries = read_index(gitdir)
         self.assertEqual(3, len(entries))
-
         names = [e.name for e in entries]
-        self.assertEqual(
-            ["alphabeta/letters.txt", "numbers/digits.txt", "quote.txt"], names
-        )
+        self.assertEqual(["alphabeta/letters.txt", "numbers/digits.txt", "quote.txt"], names)

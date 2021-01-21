@@ -5,8 +5,7 @@ import unittest
 import zlib
 from unittest.mock import patch
 
-from pyfakefs.fake_filesystem_unittest import TestCase
-
+from pyfakefs.fake_filesystem_unittest import TestCase  # type: ignore
 import pyvcs
 from pyvcs import index, objects, porcelain, repo, tree
 
@@ -25,23 +24,19 @@ class HashObjectTestCase(TestCase):
 
     def test_compute_object_id_and_create_a_blob(self):
         gitdir = repo.repo_create(".")
-
         contents = "that's what she said"
         data = contents.encode()
         sha = objects.hash_object(data, fmt="blob", write=True)
         expected_sha = "7e774cf533c51803125d4659f3488bd9dffc41a6"
         self.assertEqual(expected_sha, sha)
-
         obj_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a6"
         self.assertTrue(obj_path.exists())
-
         with obj_path.open(mode="rb") as f:
             content = zlib.decompress(f.read())
         self.assertEqual(b"blob 20\x00that's what she said", content)
 
     def test_hash_object_twice(self):
         _ = repo.repo_create(".")
-
         contents = "that's what she said"
         data = contents.encode()
         expected_sha = "7e774cf533c51803125d4659f3488bd9dffc41a6"
@@ -60,23 +55,19 @@ class ResolveObjectTestCase(TestCase):
         gitdir = repo.repo_create(".")
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a6"
         self.fs.create_file(file_path=blob_path)
-
         objs = objects.resolve_object("7e774", gitdir)
         self.assertEqual(1, len(objs))
-
         [sha] = objs
         self.assertEqual("7e774cf533c51803125d4659f3488bd9dffc41a6", sha)
 
     def test_resolve_many_objects(self):
         gitdir = repo.repo_create(".")
-
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a1"
         self.fs.create_file(file_path=blob_path)
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a2"
         self.fs.create_file(file_path=blob_path)
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a3"
         self.fs.create_file(file_path=blob_path)
-
         objs = objects.resolve_object("7e774", gitdir)
         self.assertEqual(3, len(objs))
         self.assertEqual(
@@ -92,12 +83,10 @@ class ResolveObjectTestCase(TestCase):
         gitdir = repo.repo_create(".")
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a1"
         self.fs.create_file(file_path=blob_path)
-
         obj_name = "7e7"
         with self.assertRaises(Exception) as ctx:
             objects.resolve_object(obj_name, gitdir)
         self.assertEqual(f"Not a valid object name {obj_name}", str(ctx.exception))
-
         obj_name = "7e7774cf533c51803125d4659f3488bd9dffc41a1e"
         with self.assertRaises(Exception) as ctx:
             objects.resolve_object(obj_name, gitdir)
@@ -107,7 +96,6 @@ class ResolveObjectTestCase(TestCase):
         gitdir = repo.repo_create(".")
         blob_path = gitdir / "objects" / "7e" / "774cf533c51803125d4659f3488bd9dffc41a1"
         self.fs.create_file(file_path=blob_path)
-
         obj_name = "7e775"
         with self.assertRaises(Exception) as ctx:
             objects.resolve_object(obj_name, gitdir)
@@ -143,7 +131,6 @@ class CatFileTestCase(TestCase):
             b"x\x9cK\xca\xc9OR02`(\xc9H,Q/V(\x07R\n\xc5\x19\xa9\n\xc5\x89\x99)\x00\x83:\tb"
         )
         self.fs.create_file(file_path=blob_path, contents=blob_contents)
-
         with patch("sys.stdout", new=io.StringIO()) as out:
             objects.cat_file("7e774cf533c51803125d4659f3488bd9dffc41a6", pretty=True)
             self.assertEqual("that's what she said", out.getvalue().strip())
@@ -162,7 +149,6 @@ class CatFileTestCase(TestCase):
         entries = index.read_index(gitdir)
         sha = tree.write_tree(gitdir, entries)
         self.assertEqual("a9cde03408c68cbb205b038140b4c3a38aa1d01a", sha)
-
         expected_output = "\n".join(
             [
                 "040000 tree 7926bf494dcdb82261e1ca113116610f8d05470b\talphabeta",
@@ -170,7 +156,6 @@ class CatFileTestCase(TestCase):
                 "100644 blob 7e774cf533c51803125d4659f3488bd9dffc41a6\tquote.txt",
             ]
         )
-
         with patch("sys.stdout", new=io.StringIO()) as out:
             objects.cat_file(sha, pretty=True)
             self.assertEqual(expected_output, out.getvalue().strip())
@@ -182,7 +167,6 @@ class CatFileTestCase(TestCase):
         sha = "faa73127e7a7b97faf08c147e69130a424c5ddbb"
         obj_path = gitdir / "objects" / sha[:2] / sha[2:]
         self.fs.create_file(obj_path, contents=obj)
-
         expected_output = "\n".join(
             [
                 "tree 0c30406df9aea54b7fd6b48360417e59ab7ab9bb",
@@ -192,7 +176,6 @@ class CatFileTestCase(TestCase):
                 "initial commit",
             ]
         )
-
         with patch("sys.stdout", new=io.StringIO()) as out:
             objects.cat_file(sha, pretty=True)
             self.assertEqual(expected_output, out.getvalue().strip())
