@@ -1,8 +1,8 @@
 import datetime as dt
 import statistics
 import typing as tp
-from dateutil.relativedelta import relativedelta
 
+from dateutil.relativedelta import relativedelta
 from vkapi.friends import get_friends
 
 
@@ -16,7 +16,7 @@ def age_predict(user_id: int) -> tp.Optional[float]:
     :return: Медианный возраст пользователя.
     """
     ages = []
-    friends = get_friends(user_id)
+    friends = get_friends(user_id, fields=[bdate])
     for friend in friends.items:
         try:
             birthdate = dt.datetime.strptime(friend["bdate"], "%d.%m.%Y")  # type: ignore
