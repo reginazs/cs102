@@ -24,7 +24,6 @@ def get_friends(
     """
     Получить список идентификаторов друзей пользователя или расширенную информацию
     о друзьях пользователя (при использовании параметра fields).
-
     :param user_id: Идентификатор пользователя, список друзей для которого нужно получить.
     :param count: Количество друзей, которое нужно вернуть.
     :param offset: Смещение, необходимое для выборки определенного подмножества друзей.
@@ -62,7 +61,6 @@ def get_mutual(
 ) -> tp.Union[tp.List[int], tp.List[MutualFriends]]:
     """
     Получить список идентификаторов общих друзей между парой пользователей.
-
     :param source_uid: Идентификатор пользователя, чьи друзья пересекаются с друзьями пользователя с идентификатором target_uid.
     :param target_uid: Идентификатор пользователя, с которым необходимо искать общих друзей.
     :param target_uids: Cписок идентификаторов пользователей, с которыми необходимо искать общих друзей.
@@ -90,15 +88,15 @@ def get_mutual(
     if progress is not None:
         range_ = progress(range_)
 
-    for shift in range_:
+    for i in range_:
         response = session.get(
             "friends.getMutual",
             params={
                 "source_uid": source_uid,
-                "target_uids": ",".join([str(i) for i in target_uids[shift : shift + 100]]),  # type: ignore
+                "target_uids": ",".join([str(i) for i in target_uids[i : i + 100]]),  # type: ignore
                 "order": order,
                 "count": count,
-                "offset": offset + shift,
+                "offset": offset + i,
                 "access_token": config.VK_CONFIG["access_token"],
                 "v": config.VK_CONFIG["version"],
             },
@@ -111,6 +109,6 @@ def get_mutual(
             )
             for data in response
         )
-        time.sleep(0.34)
+        time.sleep(0.5)
 
     return result

@@ -2,14 +2,13 @@ import typing as tp
 
 import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 from requests.exceptions import RetryError
+from requests.packages.urllib3.util.retry import Retry
 
 
 class Session(requests.Session):
     """
     Сессия.
-
     :param base_url: Базовый адрес, на который будут выполняться запросы.
     :param timeout: Максимальное время ожидания ответа от сервера.
     :param max_retries: Максимальное число повторных запросов.
