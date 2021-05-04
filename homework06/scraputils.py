@@ -1,9 +1,14 @@
 import requests
+<<<<<<< HEAD
 from bs4 import BeautifulSoup  # type: ignore
+=======
+from bs4 import BeautifulSoup
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 def extract_news(parser):
     """ Extract news from a given web page """
+<<<<<<< HEAD
 
     def extract_first_integer_from_tag(tag, separator):
         try:
@@ -33,17 +38,29 @@ def extract_news(parser):
             }
         )
     return news
+=======
+    news_list = []
+
+    # PUT YOUR CODE HERE
+
+    return news_list
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 def extract_next_page(parser):
     """ Extract next page URL """
+<<<<<<< HEAD
     return parser.find("a", {"class": "morelink"})["href"]
+=======
+    # PUT YOUR CODE HERE
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 def get_news(url, n_pages=1):
     """ Collect news from a given web page """
     news = []
     while n_pages:
+<<<<<<< HEAD
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         current_news = extract_news(soup)
@@ -52,3 +69,15 @@ def get_news(url, n_pages=1):
         news.extend(current_news)
         n_pages -= 1
     return news
+=======
+        print("Collecting data from page: {}".format(url))
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "html.parser")
+        news_list = extract_news(soup)
+        next_page = extract_next_page(soup)
+        url = "https://news.ycombinator.com/" + next_page
+        news.extend(news_list)
+        n_pages -= 1
+    return news
+
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0

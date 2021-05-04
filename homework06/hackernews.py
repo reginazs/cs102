@@ -1,20 +1,35 @@
+<<<<<<< HEAD
 import string
 
 from bayes import NaiveBayesClassifier
 from bottle import redirect, request, route, run, template  # type: ignore
 from db import News, session
 from scraputils import get_news
+=======
+from bottle import (
+    route, run, template, request, redirect
+)
+
+from scrapper import get_news
+from db import News, session
+from bayes import NaiveBayesClassifier
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 @route("/news")
 def news_list():
     s = session()
     rows = s.query(News).filter(News.label == None).all()
+<<<<<<< HEAD
     return template("news_template", rows=rows)
+=======
+    return template('news_template', rows=rows)
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 @route("/add_label/")
 def add_label():
+<<<<<<< HEAD
     query = request.query.decode()
     id = int(query["id"])
     label = query["label"]
@@ -82,7 +97,26 @@ def get_weight(label):
         return 0
     else:
         raise AssertionError("Invalid label" + label)
+=======
+    # PUT YOUR CODE HERE
+    redirect("/news")
+
+
+@route("/update")
+def update_news():
+    # PUT YOUR CODE HERE
+    redirect("/news")
+
+
+@route("/classify")
+def classify_news():
+    # PUT YOUR CODE HERE
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
 
 
 if __name__ == "__main__":
     run(host="localhost", port=8080)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0

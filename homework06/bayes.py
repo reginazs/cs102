@@ -75,6 +75,10 @@ class NaiveBayesClassifier:
         reg = []
         for one in X_test:
             reg.append(self.predict(one))
+<<<<<<< HEAD
         return sum(0 if reg[i] != y_test[i] else 1 for i in range(len(X_test))) / len(
             X_test
         )
+=======
+        return sum(0 if reg[i] != y_test[i] else 1 for i in range(len(X_test))) / len(X_test)
+>>>>>>> 54726b53e165737f0c95d8eec927bb6e81b5d2c0
