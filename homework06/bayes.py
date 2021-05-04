@@ -11,7 +11,6 @@ class NaiveBayesClassifier:
         self.p_labels = []
 
     def fit(self, X, y):
-
         """ Fit Naive Bayes classifier according to X, y. """
         self.labels = [label for label in set(y)]
         classes = len(self.labels)
@@ -43,7 +42,6 @@ class NaiveBayesClassifier:
                 )
 
     def predict(self, X):
-
         """ Perform classification on an array of test vectors X. """
         labels = []
         classes = len(self.labels)
@@ -63,7 +61,6 @@ class NaiveBayesClassifier:
         return labels
 
     def score(self, X_test, y_test):
-
         """ Returns the mean accuracy on the given test data and labels. """
         prediction = self.predict(X_test)
         count = 0
