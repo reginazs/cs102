@@ -2,12 +2,14 @@ import csv
 import string
 from bayes import NaiveBayesClassifier
 
-with open("data/SMSSpamCollection", encoding='utf_8_sig') as f:
+with open("data/SMSSpamCollection", encoding="utf_8_sig") as f:
     data = list(csv.reader(f, delimiter="\t"))
+
 
 def clean(s):
     translator = str.maketrans("", "", string.punctuation)
     return s.translate(translator)
+
 
 X, y = [], []
 

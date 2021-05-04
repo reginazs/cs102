@@ -3,7 +3,6 @@ import math
 
 
 class NaiveBayesClassifier:
-
     def __init__(self, alpha=1):
         self.alpha = alpha
         self.labels = []
@@ -37,9 +36,9 @@ class NaiveBayesClassifier:
         s_table = [sum(self.table[i + 1]) for i in range(classes)]
         for line in range(len(self.table[0])):
             for column in range(classes + 1, classes * 2 + 1):
-                self.table[column][line] = (self.table[column -
-                    classes][line] + self.alpha) / (s_table[column
-                    - classes - 1] + self.alpha * len(self.table[0]))
+                self.table[column][line] = (self.table[column - classes][line] + self.alpha) / (
+                    s_table[column - classes - 1] + self.alpha * len(self.table[0])
+                )
 
     def predict(self, X):
         """ Perform classification on an array of test vectors X. """
@@ -51,8 +50,9 @@ class NaiveBayesClassifier:
             for word in words:
                 if word in self.table[0]:
                     for i in range(classes):
-                        string_labels[i] += math.log(self.table[i + classes + 1]
-                        [self.table[0].index(word)])
+                        string_labels[i] += math.log(
+                            self.table[i + classes + 1][self.table[0].index(word)]
+                        )
             for i in range(classes):
                 if string_labels[i] == max(string_labels):
                     labels.append(self.labels[i])
