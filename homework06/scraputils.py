@@ -1,9 +1,11 @@
+import socket
+
 import requests
 from bs4 import BeautifulSoup
-import socket
 
 
 def extract_news(parser):
+
     """ Extract news from a given web page """
     news_list = []
     news_list_subtext = []
@@ -40,6 +42,7 @@ def extract_news(parser):
 
 
 def extract_next_page(parser):
+
     """ Extract next page URL """
     try:
         next_page = parser.table.find("a", attrs={"class": "morelink"}).get("href")
@@ -51,6 +54,7 @@ def extract_next_page(parser):
 
 
 def get_news(url="https://news.ycombinator.com/newest", n_pages=1):
+
     """ Collect news from a given web page """
     news = []
     while n_pages:
