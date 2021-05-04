@@ -1,15 +1,14 @@
-from bottle import redirect, request, route, run, template  # type:ignore
-from scrapper import get_news
-
-from bayes import NaiveBayesClassifier
+from bottle import (route, run, template, request, redirect)
+from scraputils import get_news
 from db import News, session
+from bayes import NaiveBayesClassifier
 
 
 @route("/news")
 def news_list():
     s = session()
     rows = s.query(News).filter(News.label == None).all()
-    return template("news_template", rows=rows)
+    return template('news_template', rows=rows)
 
 
 @route("/add_label/")
@@ -28,17 +27,10 @@ def update_news():
     s = session()
     last_news = get_news()
     for news in last_news:
-        check = (
-            s.query(News).filter(News.author == news["author"], News.title == news["title"]).count()
-        )
+        check = s.query(News).filter(News.author==news['author'], News.title==news['title']).count()
         if check == 0:
-            new = News(
-                title=news["title"],
-                author=news["author"],
-                url=news["url"],
-                comments=news["comments"],
-                points=news["points"],
-            )
+            new = News(title=news['title'], author=news['author'], url=news['url'],
+                comments=news['comments'], points=news['points'])
             s.add(new)
     s.commit()
     redirect("/news")
@@ -54,11 +46,14 @@ def classify_news():
     x = [row.title for row in news_without_lable]
     label = classifier.predict(x)
     classified_news = [[] for _ in range(3)]
-    good = [news_without_lable[i] for i in range(len(news_without_lable)) if label[i] == "good"]
-    maybe = [news_without_lable[i] for i in range(len(news_without_lable)) if label[i] == "maybe"]
-    never = [news_without_lable[i] for i in range(len(news_without_lable)) if label[i] == "never"]
+    good = [news_without_lable[i] for i in
+                    range(len(news_without_lable)) if label[i] == 'good']
+    maybe = [news_without_lable[i] for i in
+                    range(len(news_without_lable)) if label[i] == 'maybe']
+    never = [news_without_lable[i] for i in
+                    range(len(news_without_lable)) if label[i] == 'never']
 
-    return template("recommended", {"good": good, "never": never, "maybe": maybe})
+    return template('recommended', {'good': good, 'never': never, 'maybe': maybe})
 
 
 if __name__ == "__main__":
