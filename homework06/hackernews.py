@@ -36,8 +36,8 @@ def update_news():
     news = get_news("https://news.ycombinator.com/", 3)
     s = session()
     for n in news:  # n поменять на new
-    
-        if has(s, n["author"], n["title"]): 
+
+        if has(s, n["author"], n["title"]):
             s.add(
                 News(
                     title=n["title"],
