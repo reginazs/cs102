@@ -1,7 +1,7 @@
-import psycopg2 # type: ignore
-import psycopg2.extras # type: ignore
-from pprint import pprint as pp # type: ignore
-from tabulate import tabulate # type: ignore
+import psycopg2 
+import psycopg2.extras 
+from pprint import pprint as pp 
+from tabulate import tabulate 
 
 conn = psycopg2.connect("host=localhost port=5433 dbname=odscourse user=postgres password=secret")
 cursor = conn.cursor()  # cursor_factory=psycopg2.extras.DictCursor)

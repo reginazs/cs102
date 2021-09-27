@@ -1,4 +1,4 @@
-import psycopg2 mypy # type: ignore
+import psycopg2 mypy 
 import csv
 
 conn = psycopg2.connect("host=localhost port=5433 dbname=odscourse user=postgres password=secret")
@@ -38,7 +38,7 @@ with open("telecom_churn.csv", "r") as f:
     next(reader)
     for Id, row in enumerate(reader):
         cursor.execute(
-            "INSERT INTO telecom_churn VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", # type: ignore
+            "INSERT INTO telecom_churn VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
             [Id] + row, 
         )
 conn.commit()
