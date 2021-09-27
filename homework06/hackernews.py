@@ -36,7 +36,7 @@ def update_news():
     news = get_news("https://news.ycombinator.com/", 3)
     s = session()
     for n in news:  # n поменять на new
-        if has(s, n["author"], n["title"]):
+        if has(s, n["author"], n["title"]): 
             s.add(
                 News(
                     title=n["title"],
@@ -67,9 +67,7 @@ def classify_news():
     test = s.query(News).filter(News.label == None).all()
     return template(
         "news_template",
-        rows=sorted(
-            test, key=lambda news: get_weight(model.predict(clean(news.title).lower()))
-        ),
+        rows=sorted(test, key=lambda news: get_weight(model.predict(clean(news.title).lower()))),
     )
 
 

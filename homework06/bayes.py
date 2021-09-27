@@ -79,8 +79,8 @@ class NaiveBayesClassifier:
         for one in X_test:
             correct.append(self.predict(one))
         try:
-            return sum(
-                0 if correct[i] != y_test[i] else 1 for i in range(len(X_test))
-            ) / len(X_test)
+            return sum(0 if correct[i] != y_test[i] else 1 for i in range(len(X_test))) / len(
+                X_test
+            )
         except ZeroDivisionError:
             pass
