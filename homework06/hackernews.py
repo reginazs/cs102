@@ -49,6 +49,7 @@ def update_news():
             )
     s.commit()
     redirect("/news")
+    
 
 
 def clean(s):
