@@ -1,4 +1,4 @@
-import psycopg2 mypy
+import psycopg2 
 import csv
 
 conn = psycopg2.connect("host=localhost port=5433 dbname=odscourse user=postgres password=secret")
