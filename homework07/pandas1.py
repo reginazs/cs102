@@ -37,39 +37,52 @@ Original file is located at
 # Commented out IPython magic to ensure Python compatibility.
 import pandas as pd
 import io
+
 # %matplotlib inline
 import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-df = pd.read_csv("adult.data.csv") #, delimiter=",", names = ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation", "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country", "salary"])
+df = pd.read_csv(
+    "adult.data.csv"
+)  # , delimiter=",", names = ["age", "workclass", "fnlwgt", "education", "education-num", "marital-status", "occupation", "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country", "salary"])
 
 df.head()
 
 """**1. Сколько мужчин и женщин (признак *sex*) представлено в этом наборе данных?**"""
 
-df['sex'].value_counts()
+df["sex"].value_counts()
 
 """**2. Каков средний возраст (признак *age*) женщин?**"""
 
-print('Средний возраст женщин', df[df.sex == "Female"].age.mean())
+print("Средний возраст женщин", df[df.sex == "Female"].age.mean())
 
 """**3. Какова доля граждан Германии (признак *native-country*)?**"""
 
-print('Доля граждан Германиии', df['native-country'].value_counts().loc['Germany'] / len(df))
+print("Доля граждан Германиии", df["native-country"].value_counts().loc["Germany"] / len(df))
 
 """**4-5. Каковы средние значения и среднеквадратичные отклонения возраста тех, кто получает более 50K в год (признак *salary*) и тех, кто получает менее 50K в год? **"""
 
-dm = df.groupby('salary')[['age']].mean()
-ds = df.groupby('salary')[['age']].std()
-d = pd.concat([dm,ds],axis=1)
-d.columns = ['mean','std']
+dm = df.groupby("salary")[["age"]].mean()
+ds = df.groupby("salary")[["age"]].std()
+d = pd.concat([dm, ds], axis=1)
+d.columns = ["mean", "std"]
 print(d)
 
 """**6. Правда ли, что люди, которые получают больше 50k, имеют как минимум высшее образование? (признак *education – Bachelors, Prof-school, Assoc-acdm, Assoc-voc, Masters* или *Doctorate*)**"""
 
 ed_data = df[df["salary"] == ">50K"]["education"].unique()
-ed_list = ['HS-grad', 'Some-college', '7th-8th', '12th', '10th', '11th', '9th', '5th-6th', '1st-4th']
+ed_list = [
+    "HS-grad",
+    "Some-college",
+    "7th-8th",
+    "12th",
+    "10th",
+    "11th",
+    "9th",
+    "5th-6th",
+    "1st-4th",
+]
 is_it = True
 for i in range(len(ed_list)):
     if ed_list[i] in ed_data:
@@ -78,7 +91,7 @@ print(is_it)
 
 """**7. Выведите статистику возраста для каждой расы (признак *race*) и каждого пола. Используйте *groupby* и *describe*. Найдите таким образом максимальный возраст мужчин расы *Amer-Indian-Eskimo*.**"""
 
-grouped_by_sex_and_race = df.groupby(['race', 'sex'])
+grouped_by_sex_and_race = df.groupby(["race", "sex"])
 print(df.groupby(["race", "sex"]).age.describe())
 
 
